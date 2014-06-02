@@ -7,3 +7,11 @@
 //
 
 #include "Vertex.h"
+
+void Vertex::draw() {
+    
+}
+
+void Vertex::remove(Vertex v) {
+    
+}
