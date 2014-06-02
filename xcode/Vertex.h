@@ -1,6 +1,6 @@
 #pragma once
 //
-//  Vertex.h
+//  Point.h
 //  CinderDrawing
 //
 //  Created by Sean Turner on 5/30/14.
@@ -21,11 +21,11 @@
 
 class Vertex {
 public:
-    Vertex(ci::Vec2f pos, ci::Color color, float radius) {}
-    Vertex(ci::Vec2f pos) : Vertex(pos, ci::Color::white(), 3.0f) {}
+    Vertex(ci::Vec2f pos, ci::Color color, float radius, float scale);
     
     ci::Vec2f   mPosition;
     ci::Color   mColor;
     
     float       mRadius;
+    float       mScale;
 };
