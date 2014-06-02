@@ -24,7 +24,7 @@ public:
     Vertex(ci::Vec2f pos, ci::Color color, float radius) {}
     Vertex(ci::Vec2f pos) : Vertex(pos, ci::Color::white(), 3.0f) {}
     void    draw();
-    void    remove(Vertex v);
+    //void    remove(Vertex v);
     
     ci::Vec2f   mPosition;
     ci::Color   mColor;

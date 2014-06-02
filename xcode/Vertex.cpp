@@ -7,11 +7,10 @@
 //
 
 #include "Vertex.h"
+#include "Cinder/gl/gl.h"
+
+using namespace ci;
 
 void Vertex::draw() {
-    
-}
-
-void Vertex::remove(Vertex v) {
-    
+    gl::drawSolidCircle(mPosition, mRadius);
 }
