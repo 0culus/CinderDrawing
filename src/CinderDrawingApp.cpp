@@ -3,32 +3,22 @@
 
 using namespace ci;
 using namespace ci::app;
-using namespace std;
 
 class CinderDrawingApp : public AppNative {
-  public:
-	void setup();
-	void mouseDown( MouseEvent event );	
-	void update();
-	void draw();
+    std::vector<Vec2f> points;
+public:
+    void mouseDrag(MouseEvent e) { points.push_back(e.getPos()); }
+    void update() { }
+    void draw();
 };
 
-void CinderDrawingApp::setup()
-{
-}
-
-void CinderDrawingApp::mouseDown( MouseEvent event )
-{
-}
-
-void CinderDrawingApp::update()
-{
-}
-
-void CinderDrawingApp::draw()
-{
-	// clear out the window with black
-	gl::clear( Color( 0, 0, 0 ) ); 
+void CinderDrawingApp::draw() {
+    gl::clear(Color::black(), true);
+    gl::color(Color(255, 255, 255));
+    gl::begin(GL_LINE_STRIP);
+    for (const auto& pt : points)
+        gl::vertex(pt);
+    gl::end();
 }
 
 CINDER_APP_NATIVE( CinderDrawingApp, RendererGl )
