@@ -4,6 +4,8 @@
 using namespace ci;
 using namespace ci::app;
 
+
+//! this code is from Cameron, @cdacamar on GitHub
 class CinderDrawingApp : public AppNative {
     std::vector<Vec2f> points;
 public:
