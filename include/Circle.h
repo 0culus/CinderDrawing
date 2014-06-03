@@ -1,6 +1,6 @@
 #pragma once
 //
-//  Vertex.h
+//  Circle.h
 //  CinderDrawing
 //
 //  Created by Sean Turner on 5/30/14.
@@ -19,14 +19,14 @@
 #include "cinder/Vector.h"
 #include "cinder/Color.h"
 
-class Vertex {
+class Circle {
 public:
-    Vertex(ci::Vec2f pos, ci::Color color, float radius) {}
-    Vertex(ci::Vec2f pos) : Vertex(pos, ci::Color::white(), 3.0f) {}
+    Circle(ci::Vec2i pos, ci::Color color, float radius) {}
+    Circle(ci::Vec2i pos) : Circle(pos, ci::Color(255, 255, 255), 3.0f) {}
     void    draw();
     //void    remove(Vertex v);
     
-    ci::Vec2f   mPosition;
+    ci::Vec2i   mPosition;
     ci::Color   mColor;
     
     float       mRadius;
