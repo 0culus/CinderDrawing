@@ -13,4 +13,4 @@ http://www.boost.org
 
 =============
 
-This one is pretty simple; just build it and drag your mouse! 
+Just build, run, drag your mouse! I plan on adding more features as I practice using Cinder. :^)
