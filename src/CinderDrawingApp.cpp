@@ -1,6 +1,8 @@
 #include "cinder/app/AppNative.h"
+#include "cinder/app/AppBasic.h"
 #include "cinder/gl/gl.h"
 #include "Circle.h"
+#include <vector>
 
 using namespace ci;
 using namespace ci::app;
@@ -12,7 +14,7 @@ class CinderDrawingApp : public AppNative {
 public:
     void mouseDrag(MouseEvent e);
     void mouseDown(MouseEvent e);
-    void mouseUp(MouseEvent e);
+    //void mouseUp(MouseEvent e);
     void update() { }
     void draw();
 };
