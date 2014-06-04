@@ -41,8 +41,4 @@ void CinderDrawingApp::mouseDown(MouseEvent e) {
     mouseDrag(e); // allows a connected line
 }
 
-void CinderDrawingApp::mouseUp(MouseEvent e) {
-    
-}
-
 CINDER_APP_NATIVE( CinderDrawingApp, RendererGl )
