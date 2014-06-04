@@ -23,6 +23,7 @@ class Circle {
 public:
     Circle(ci::Vec2i pos, ci::Color color, float radius) {}
     Circle(ci::Vec2i pos) : Circle(pos, ci::Color(255, 255, 255), 3.0f) {}
+	~Circle() { }
     void    draw();
     //void    remove(Vertex v);
     

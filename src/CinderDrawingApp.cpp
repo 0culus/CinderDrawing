@@ -1,5 +1,5 @@
 #include "cinder/app/AppNative.h"
-#include "cinder/app/AppBasic.h"
+#include "cinder/app/AppBasic.h" // allows us to specify window dimensions and framerate
 #include "cinder/gl/gl.h"
 #include "Circle.h"
 #include <vector>
@@ -12,12 +12,19 @@ using namespace ci::app;
 class CinderDrawingApp : public AppNative {
     std::vector<Vec2f> points;
 public:
+	void prepareSettings(Settings *settings);
     void mouseDrag(MouseEvent e);
     void mouseDown(MouseEvent e);
     //void mouseUp(MouseEvent e);
     void update() { }
     void draw();
 };
+
+//! setup the window
+void CinderDrawingApp::prepareSettings(Settings *settings) {
+	settings->setWindowSize(800, 600);
+	settings->setFrameRate(60.0f);
+}
 
 //! draw the line
 void CinderDrawingApp::draw() {
