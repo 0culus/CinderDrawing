@@ -12,13 +12,18 @@ using namespace ci::app;
 class CinderDrawingApp : public AppNative {
     std::vector<Vec2f> points;
 public:
+	void setup();
 	void prepareSettings(Settings *settings);
     void mouseDrag(MouseEvent e);
     void mouseDown(MouseEvent e);
-    //void mouseUp(MouseEvent e);
+	void keyDown(KeyEvent e);
     void update() { }
     void draw();
 };
+
+void CinderDrawingApp::setup() {
+
+}
 
 //! setup the window
 void CinderDrawingApp::prepareSettings(Settings *settings) {
@@ -48,6 +53,13 @@ void CinderDrawingApp::mouseDown(MouseEvent e) {
         v.draw();
     }
     mouseDrag(e); // allows a connected line
+}
+
+//! toggle fullscreen with f
+void CinderDrawingApp::keyDown(KeyEvent e) {
+	if (e.getCode() == app::KeyEvent::KEY_f) {
+		setFullScreen(!isFullScreen());
+	}
 }
 
 CINDER_APP_NATIVE( CinderDrawingApp, RendererGl )
