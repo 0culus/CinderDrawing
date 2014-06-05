@@ -1,6 +1,8 @@
 #include "cinder/app/AppNative.h"
 #include "cinder/app/AppBasic.h" // allows us to specify window dimensions and framerate
 #include "cinder/gl/gl.h"
+#include "cinder/gl/GlslProg.h"
+#include "Resources.h"
 #include "Circle.h"
 #include <vector>
 
@@ -19,10 +21,22 @@ public:
 	void keyDown(KeyEvent e);
     void update() { }
     void draw();
+
+	gl::GlslProgRef	mShader;
 };
 
+//! setup the shaders and other resources
 void CinderDrawingApp::setup() {
-
+	try {
+		mShader = gl::GlslProg::create(loadResource(RES_PASSTHRU_VERT), loadResource(RES_BLUR_FRAG));
+	}
+	catch (gl::GlslProgCompileExc &exc) {
+		std::cout << "Shader compile error: " << std::endl;
+		std::cout << exc.what();
+	}
+	catch (...) {
+		std::cout << "Unable to load shader" << std::endl;
+	}
 }
 
 //! setup the window
