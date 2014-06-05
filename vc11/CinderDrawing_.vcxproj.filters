@@ -35,6 +35,9 @@
     <ClInclude Include="..\include\Resources.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resources.rc">
@@ -52,6 +55,9 @@
     </None>
     <None Include="..\data\passThru_vert.glsl">
       <Filter>shaders</Filter>
+    </None>
+    <None Include="..\resources\glsl1.bin">
+      <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
 </Project>
