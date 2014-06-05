@@ -25,7 +25,7 @@ public:
 	gl::GlslProgRef	mShader;
 };
 
-//! setup the shaders and other resources
+//! compile the shaders and setup any other resources
 void CinderDrawingApp::setup() {
 	try {
 		mShader = gl::GlslProg::create(loadResource(RES_PASSTHRU_VERT), loadResource(RES_BLUR_FRAG));
