@@ -1,6 +1,8 @@
 #include "cinder/app/AppNative.h"
 #include "cinder/app/AppBasic.h" // allows us to specify window dimensions and framerate
 #include "cinder/gl/gl.h"
+#include "cinder/gl/GlslProg.h"
+
 #include "Circle.h"
 #include <vector>
 
@@ -19,6 +21,8 @@ public:
 	void keyDown(KeyEvent e);
     void update() { }
     void draw();
+
+	gl::GlslProgRef	mShader;
 };
 
 void CinderDrawingApp::setup() {
