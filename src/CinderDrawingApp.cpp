@@ -19,10 +19,11 @@ public:
     void mouseDrag(MouseEvent e);
     void mouseDown(MouseEvent e);
 	void keyDown(KeyEvent e);
-    void update() { }
+	void update();
     void draw();
 
 	gl::GlslProgRef	mShader;
+	float mAngle;
 };
 
 //! compile the shaders and setup any other resources
@@ -48,11 +49,15 @@ void CinderDrawingApp::prepareSettings(Settings *settings) {
 //! draw the line
 void CinderDrawingApp::draw() {
     gl::clear(Color::black(), true);
-    gl::color(Color(255, 255, 255));
+	gl::color(Color(255, 255, 255));
     gl::begin(GL_LINE_STRIP);
     for (const auto& pt : points)
         gl::vertex(pt);
     gl::end();
+}
+
+void CinderDrawingApp::update() {
+	mAngle += 0.05f;
 }
 
 //! Add position data to the vector as the mouse drags
