@@ -51,8 +51,10 @@ void CinderDrawingApp::draw() {
     gl::clear(Color::black(), true);
 	gl::color(Color(255, 255, 255));
     gl::begin(GL_LINE_STRIP);
-    for (const auto& pt : points)
-        gl::vertex(pt);
+
+	for (const auto& pt : points) 
+		gl::vertex(pt);
+
     gl::end();
 }
 
