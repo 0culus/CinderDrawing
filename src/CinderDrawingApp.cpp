@@ -81,6 +81,11 @@ void CinderDrawingApp::keyDown(KeyEvent e) {
 	if (e.getCode() == app::KeyEvent::KEY_f) {
 		setFullScreen(!isFullScreen());
 	}
+
+	// this is quick n dirty. Might not be the cleanest way to exit though. 
+	else if (e.getCode() == app::KeyEvent::KEY_ESCAPE) {
+		exit(0);
+	}
 }
 
 CINDER_APP_NATIVE( CinderDrawingApp, RendererGl )
