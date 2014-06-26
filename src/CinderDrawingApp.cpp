@@ -33,10 +33,11 @@ void CinderDrawingApp::setup() {
 	}
 	catch (gl::GlslProgCompileExc &exc) {
 		std::cout << "Shader compile error: " << std::endl;
-		std::cout << exc.what();
+		std::cout << exc.what() << std::endl;
 	}
-	catch (...) {
+	catch (Exception &exc) {
 		std::cout << "Unable to load shader" << std::endl;
+		std::cout << exc.what() << std::endl;
 	}
 }
 
