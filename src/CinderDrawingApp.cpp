@@ -22,14 +22,16 @@ public:
 	void update();
     void draw();
 
-	gl::GlslProgRef	mShader;
-	float mAngle;
+	gl::GlslProg	mShader;
+	float			mAngle;
+	int				height;
+	int				width;
 };
 
 //! compile the shaders and setup any other resources
 void CinderDrawingApp::setup() {
 	try {
-		mShader = gl::GlslProg::create(loadResource(RES_PASSTHRU_VERT), loadResource(RES_BLUR_FRAG));
+		mShader = gl::GlslProg(loadResource(RES_PASSTHRU_VERT), loadResource(RES_BLUR_FRAG));
 	}
 	catch (gl::GlslProgCompileExc &exc) {
 		std::cout << "Shader compile error: " << std::endl;
@@ -49,14 +51,24 @@ void CinderDrawingApp::prepareSettings(Settings *settings) {
 
 //! draw the line
 void CinderDrawingApp::draw() {
+	mShader.bind();
+	width = getWindowWidth();
+	height = getWindowHeight();
+
     gl::clear(Color::black(), true);
 	gl::color(Color(255, 255, 255));
+	//gl::color(Color(0, 0, 0));
     gl::begin(GL_LINE_STRIP);
 
-	for (const auto& pt : points) 
+	for (const auto& pt : points) {
 		gl::vertex(pt);
 
+		mShader.uniform("width", width);
+		mShader.uniform("height", height);
+	}
+
     gl::end();
+	mShader.unbind();
 }
 
 void CinderDrawingApp::update() {
