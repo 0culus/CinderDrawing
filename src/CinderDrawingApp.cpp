@@ -52,19 +52,19 @@ void CinderDrawingApp::prepareSettings(Settings *settings) {
 //! draw the line
 void CinderDrawingApp::draw() {
 	mShader.bind();
-	width = getWindowWidth();
-	height = getWindowHeight();
+	//width = getWindowWidth();
+	//height = getWindowHeight();
 
-    gl::clear(Color::black(), true);
-	gl::color(Color(255, 255, 255));
-	//gl::color(Color(0, 0, 0));
+    gl::clear(Color::white(), true);
+	//gl::color(Color(255, 255, 255));
+	gl::color(Color(0, 0, 0));
     gl::begin(GL_LINE_STRIP);
 
 	for (const auto& pt : points) {
 		gl::vertex(pt);
 
-		mShader.uniform("width", width);
-		mShader.uniform("height", height);
+		mShader.uniform("width", pt.x);
+		mShader.uniform("height", pt.y);
 	}
 
     gl::end();
