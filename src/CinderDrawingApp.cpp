@@ -49,8 +49,9 @@ void CinderDrawingApp::prepareSettings(Settings *settings) {
 
 //! draw the line
 void CinderDrawingApp::draw() {
-    gl::clear(Color::black(), true);
-	gl::color(Color(255, 255, 255));
+    gl::clear(Color::white(), true);
+	//gl::color(Color(255, 255, 255));
+	gl::color(Color(0, 0, 0));
     gl::begin(GL_LINE_STRIP);
 
 	for (const auto& pt : points) 
