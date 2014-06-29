@@ -23,10 +23,9 @@ public:
     void draw();
 
 	gl::GlslProg	mShader;
-	float mAngle;
-
-	int height;
-	int width;
+	float			mAngle;
+	int				height;
+	int				width;
 };
 
 //! compile the shaders and setup any other resources
@@ -56,16 +55,17 @@ void CinderDrawingApp::draw() {
 	width = getWindowWidth();
 	height = getWindowHeight();
 
-    gl::clear(Color::white(), true);
-	//gl::color(Color(255, 255, 255));
-	gl::color(Color(0, 0, 0));
+    gl::clear(Color::black(), true);
+	gl::color(Color(255, 255, 255));
+	//gl::color(Color(0, 0, 0));
     gl::begin(GL_LINE_STRIP);
 
-	for (const auto& pt : points) 
+	for (const auto& pt : points) {
 		gl::vertex(pt);
 
-	mShader.uniform("width", width);
-	mShader.uniform("height", height);
+		mShader.uniform("width", width);
+		mShader.uniform("height", height);
+	}
 
     gl::end();
 	mShader.unbind();
