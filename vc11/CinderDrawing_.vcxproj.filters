@@ -56,8 +56,5 @@
     <None Include="..\data\passThru_vert.glsl">
       <Filter>shaders</Filter>
     </None>
-    <None Include="..\resources\glsl1.bin">
-      <Filter>Resource Files</Filter>
-    </None>
   </ItemGroup>
 </Project>
