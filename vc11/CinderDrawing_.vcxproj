@@ -122,7 +122,6 @@
   <ItemGroup>
     <None Include="..\data\gaussianBlur_frag.glsl" />
     <None Include="..\data\passThru_vert.glsl" />
-    <None Include="..\resources\glsl1.bin" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />

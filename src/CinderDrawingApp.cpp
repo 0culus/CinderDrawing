@@ -23,6 +23,7 @@ public:
     void draw();
 
 	gl::GlslProg	mShader;
+	bool			shaderOn;
 	float			mAngle;
 	int				height;
 	int				width;
@@ -38,7 +39,7 @@ void CinderDrawingApp::setup() {
 		std::cout << exc.what() << std::endl;
 	}
 	catch (Exception &exc) {
-		std::cout << "Unable to load shader" << std::endl;
+		std::cout << "Unable to load shader: " << std::endl;
 		std::cout << exc.what() << std::endl;
 	}
 }
@@ -47,24 +48,28 @@ void CinderDrawingApp::setup() {
 void CinderDrawingApp::prepareSettings(Settings *settings) {
 	settings->setWindowSize(800, 600);
 	settings->setFrameRate(60.0f);
+	shaderOn = false;
 }
 
 //! draw the line
 void CinderDrawingApp::draw() {
 	mShader.bind();
-	width = getWindowWidth();
-	height = getWindowHeight();
+	//width = getWindowWidth();
+	//height = getWindowHeight();
 
     gl::clear(Color::black(), true);
 	gl::color(Color(255, 255, 255));
 	//gl::color(Color(0, 0, 0));
+	
     gl::begin(GL_LINE_STRIP);
 
 	for (const auto& pt : points) {
 		gl::vertex(pt);
 
-		mShader.uniform("width", width);
-		mShader.uniform("height", height);
+		if (shaderOn) {
+			mShader.uniform("width", pt.y);
+			mShader.uniform("height", pt.x);
+		}
 	}
 
     gl::end();
@@ -98,6 +103,14 @@ void CinderDrawingApp::keyDown(KeyEvent e) {
 	// this is quick n dirty. Might not be the cleanest way to exit though. 
 	else if (e.getCode() == app::KeyEvent::KEY_ESCAPE) {
 		exit(0);
+	}
+	else if (e.getCode() == app::KeyEvent::KEY_s) {
+		if (shaderOn) {
+			shaderOn = false;
+		}
+		else {
+			shaderOn = true;
+		}
 	}
 }
 
