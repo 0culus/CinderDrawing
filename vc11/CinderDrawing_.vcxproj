@@ -95,7 +95,7 @@
     </ResourceCompile>
     <Link>
       <AdditionalDependencies>cinder-v120_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>"..\..\..\..\lib\cinder_0.8.6_vc2013\lib";"..\..\..\..\lib\cinder_0.8.6_vc2013\lib\msw"</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>"..\..\..\..\lib\cinder_0.8.6_vc2013\lib\msw\$(PlatformTarget)"</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
