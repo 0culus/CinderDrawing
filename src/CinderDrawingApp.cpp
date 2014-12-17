@@ -29,6 +29,7 @@ public:
 	gl::Fbo				mFboBlurred;
 	gl::Fbo				mFboTemporary;
 	bool				shaderOn;
+	bool				clearFlag;
 	float				mAngle;
 	int					height;
 	int					width;
@@ -38,6 +39,7 @@ public:
 void CinderDrawingApp::setup() {
 	try {
 		mShader = gl::GlslProg(loadResource(RES_PASSTHRU_VERT), loadResource(RES_BLUR_FRAG));
+		//mShader = gl::GlslProg(loadResource(RES_BLUR_FRAG));
 	}
 	catch (gl::GlslProgCompileExc &exc) {
 		std::cout << "Shader compile error: " << std::endl;
@@ -51,9 +53,17 @@ void CinderDrawingApp::setup() {
 	gl::Fbo::Format format;
 	format.enableMipmapping(false);
 	format.setCoverageSamples(16);
-	format.setSamples(4);
-	mFboBlurred = gl::Fbo(512, 512, format);
-	mFboTemporary = gl::Fbo(512, 512, format);
+	format.setSamples(8);
+	try {
+		mFboBlurred = gl::Fbo(512, 512, format);
+		mFboTemporary = gl::Fbo(512, 512, format);
+	}
+	catch (gl::FboException &exc) {
+		std::cout << "FBO error: " << exc.what() << std::endl;
+	}
+	catch (gl::FboExceptionInvalidSpecification &exc) {
+		std::cout << "FBO error: " << exc.what() << std::endl;
+	}
 }
 
 //! setup the window
@@ -66,49 +76,59 @@ void CinderDrawingApp::prepareSettings(Settings *settings) {
 //! draw scene
 //! https://forum.libcinder.org/topic/fbo-gaussian-blur-shader-101
 void CinderDrawingApp::draw() {
-	Area viewport = gl::getViewport();
-	gl::setViewport(mFboBlurred.getBounds());
-	mFboBlurred.bindFramebuffer();
-	gl::clear(Color::black());
+	if (clearFlag) {
+		gl::clear(Color::black());
+		clearFlag = false;
+	}
 
-	drawLine();
+	if (shaderOn) {
+		Area viewport = gl::getViewport();
+		gl::setViewport(mFboBlurred.getBounds());
+		mFboBlurred.bindFramebuffer();
+		gl::clear(Color::black());
 
-	mFboBlurred.unbindFramebuffer();
-	gl::setViewport(viewport);
+		drawLine();
 
-	mShader.bind();
-	mShader.uniform("tex0", 0); // use mFboBlurred, see lower
-	mShader.uniform("sampleOffset", Vec2f(1.5f / 512.0f, 0.0f));
+		mFboBlurred.unbindFramebuffer();
+		gl::setViewport(viewport);
 
-	mFboTemporary.bindFramebuffer();
-	gl::clear(Color::black());
-	mFboBlurred.bindTexture(0); // use rendered scene as texture
-	gl::pushMatrices();
-	gl::setMatricesWindow(512, 512, false);
-	gl::drawSolidRect(mFboBlurred.getBounds());
-	gl::popMatrices();
-	mFboBlurred.unbindTexture();
-	mFboTemporary.unbindFramebuffer();
+		mShader.bind();
+		mShader.uniform("tex0", 0); // use mFboBlurred, see lower
+		mShader.uniform("sampleOffset", Vec2f(1.5f / 512.0f, 0.0f));
 
-	mShader.uniform("sampleOffset", Vec2f(0.0f, 1.5f / 512.0f));
+		mFboTemporary.bindFramebuffer();
+		gl::clear(Color::black());
+		mFboBlurred.bindTexture(0); // use rendered scene as texture
+		gl::pushMatrices();
+		gl::setMatricesWindow(512, 512, false);
+		gl::drawSolidRect(mFboBlurred.getBounds());
+		gl::popMatrices();
+		mFboBlurred.unbindTexture();
+		mFboTemporary.unbindFramebuffer();
 
-	mFboBlurred.bindFramebuffer();
-	gl::clear(Color::black());
-	mFboTemporary.bindTexture(0); // use horizontally blurred scene as texture
-	gl::pushMatrices();
-	gl::setMatricesWindow(512, 512, false);
-	gl::drawSolidRect(mFboTemporary.getBounds());
-	gl::popMatrices();
-	mFboTemporary.unbindTexture();
-	mFboBlurred.unbindFramebuffer();
+		mShader.uniform("sampleOffset", Vec2f(0.0f, 1.5f / 512.0f));
 
-	mShader.unbind();      // don't forget to unbind the blur shader now!
+		mFboBlurred.bindFramebuffer();
+		gl::clear(Color::black());
+		mFboTemporary.bindTexture(0); // use horizontally blurred scene as texture
+		gl::pushMatrices();
+		gl::setMatricesWindow(512, 512, false);
+		gl::drawSolidRect(mFboTemporary.getBounds());
+		gl::popMatrices();
+		mFboTemporary.unbindTexture();
+		mFboBlurred.unbindFramebuffer();
 
-	// draw with additive blending
-	gl::enableAdditiveBlending();
-	gl::color(Color::white());
-	gl::draw(mFboBlurred.getTexture(), getWindowBounds());
-	gl::disableAlphaBlending();
+		mShader.unbind();      // don't forget to unbind the blur shader now!
+
+		// draw with additive blending
+		gl::enableAdditiveBlending();
+		gl::color(Color::white());
+		gl::draw(mFboBlurred.getTexture(), getWindowBounds());
+		gl::disableAlphaBlending();
+	}
+	else {
+		drawLine();
+	}
 }
 
 //! draw our mouse line
@@ -138,6 +158,10 @@ void CinderDrawingApp::drawLine() {
 
 
 void CinderDrawingApp::update() {
+	if (clearFlag) {
+		points.clear();
+	}
+
 	mAngle += 0.05f;
 }
 
@@ -155,23 +179,27 @@ void CinderDrawingApp::mouseDown(MouseEvent e) {
     mouseDrag(e); // allows a connected line
 }
 
-//! toggle fullscreen with f
+//! handle keyboard events
 void CinderDrawingApp::keyDown(KeyEvent e) {
-	if (e.getCode() == app::KeyEvent::KEY_f) {
+	switch (e.getCode()) {
+	case KeyEvent::KEY_ESCAPE:
+		quit();
+		break;
+	case KeyEvent::KEY_f:
 		setFullScreen(!isFullScreen());
-	}
-
-	// this is quick n dirty. Might not be the cleanest way to exit though. 
-	else if (e.getCode() == app::KeyEvent::KEY_ESCAPE) {
-		exit(0);
-	}
-	else if (e.getCode() == app::KeyEvent::KEY_s) {
+		break;
+	case KeyEvent::KEY_s:
 		if (shaderOn) {
 			shaderOn = false;
+			break;
 		}
 		else {
 			shaderOn = true;
+			break;
 		}
+	case KeyEvent::KEY_c:
+		clearFlag = true;
+		break;
 	}
 }
 
