@@ -4,6 +4,7 @@
 #include "cinder/gl/GlslProg.h"
 #include "Resources.h"
 #include "Circle.h"
+#include "cinder/gl/Fbo.h"
 #include <vector>
 
 using namespace ci;
@@ -21,12 +22,16 @@ public:
 	void keyDown(KeyEvent e);
 	void update();
     void draw();
+	void drawLine();
 
-	gl::GlslProg	mShader;
-	bool			shaderOn;
-	float			mAngle;
-	int				height;
-	int				width;
+	gl::GlslProg		mShader;
+	gl::Fbo::Format		format;
+	gl::Fbo				mFboBlurred;
+	gl::Fbo				mFboTemporary;
+	bool				shaderOn;
+	float				mAngle;
+	int					height;
+	int					width;
 };
 
 //! compile the shaders and setup any other resources
@@ -42,6 +47,13 @@ void CinderDrawingApp::setup() {
 		std::cout << "Unable to load shader: " << std::endl;
 		std::cout << exc.what() << std::endl;
 	}
+
+	gl::Fbo::Format format;
+	format.enableMipmapping(false);
+	format.setCoverageSamples(16);
+	format.setSamples(4);
+	mFboBlurred = gl::Fbo(512, 512, format);
+	mFboTemporary = gl::Fbo(512, 512, format);
 }
 
 //! setup the window
@@ -51,17 +63,65 @@ void CinderDrawingApp::prepareSettings(Settings *settings) {
 	shaderOn = false;
 }
 
-//! draw the line
+//! draw scene
+//! https://forum.libcinder.org/topic/fbo-gaussian-blur-shader-101
 void CinderDrawingApp::draw() {
+	Area viewport = gl::getViewport();
+	gl::setViewport(mFboBlurred.getBounds());
+	mFboBlurred.bindFramebuffer();
+	gl::clear(Color::black());
+
+	drawLine();
+
+	mFboBlurred.unbindFramebuffer();
+	gl::setViewport(viewport);
+
 	mShader.bind();
+	mShader.uniform("tex0", 0); // use mFboBlurred, see lower
+	mShader.uniform("sampleOffset", Vec2f(1.5f / 512.0f, 0.0f));
+
+	mFboTemporary.bindFramebuffer();
+	gl::clear(Color::black());
+	mFboBlurred.bindTexture(0); // use rendered scene as texture
+	gl::pushMatrices();
+	gl::setMatricesWindow(512, 512, false);
+	gl::drawSolidRect(mFboBlurred.getBounds());
+	gl::popMatrices();
+	mFboBlurred.unbindTexture();
+	mFboTemporary.unbindFramebuffer();
+
+	mShader.uniform("sampleOffset", Vec2f(0.0f, 1.5f / 512.0f));
+
+	mFboBlurred.bindFramebuffer();
+	gl::clear(Color::black());
+	mFboTemporary.bindTexture(0); // use horizontally blurred scene as texture
+	gl::pushMatrices();
+	gl::setMatricesWindow(512, 512, false);
+	gl::drawSolidRect(mFboTemporary.getBounds());
+	gl::popMatrices();
+	mFboTemporary.unbindTexture();
+	mFboBlurred.unbindFramebuffer();
+
+	mShader.unbind();      // don't forget to unbind the blur shader now!
+
+	// draw with additive blending
+	gl::enableAdditiveBlending();
+	gl::color(Color::white());
+	gl::draw(mFboBlurred.getTexture(), getWindowBounds());
+	gl::disableAlphaBlending();
+}
+
+//! draw our mouse line
+void CinderDrawingApp::drawLine() {
+	//mShader.bind();
 	//width = getWindowWidth();
 	//height = getWindowHeight();
 
-    gl::clear(Color::black(), true);
+	gl::clear(Color::black(), true);
 	gl::color(Color(255, 255, 255));
 	//gl::color(Color(0, 0, 0));
-	
-    gl::begin(GL_LINE_STRIP);
+
+	gl::begin(GL_LINE_STRIP);
 
 	for (const auto& pt : points) {
 		gl::vertex(pt);
@@ -72,9 +132,10 @@ void CinderDrawingApp::draw() {
 		}
 	}
 
-    gl::end();
-	mShader.unbind();
+	gl::end();
+	//mShader.unbind();
 }
+
 
 void CinderDrawingApp::update() {
 	mAngle += 0.05f;
