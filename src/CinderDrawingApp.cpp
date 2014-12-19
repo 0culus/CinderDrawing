@@ -55,8 +55,8 @@ void CinderDrawingApp::setup() {
 	format.setCoverageSamples(16);
 	format.setSamples(8);
 	try {
-		mFboBlurred = gl::Fbo(512, 512, format);
-		mFboTemporary = gl::Fbo(512, 512, format);
+		mFboBlurred = gl::Fbo(getWindowHeight(), getWindowWidth(), format);
+		mFboTemporary = gl::Fbo(getWindowHeight(), getWindowWidth(), format);
 	}
 	catch (gl::FboException &exc) {
 		std::cout << "FBO error: " << exc.what() << std::endl;
@@ -94,25 +94,25 @@ void CinderDrawingApp::draw() {
 
 		mShader.bind();
 		mShader.uniform("tex0", 0); // use mFboBlurred, see lower
-		mShader.uniform("sampleOffset", Vec2f(1.5f / 512.0f, 0.0f));
+		mShader.uniform("sampleOffset", Vec2f(1.5f / (float)getWindowWidth(), 0.0f));
 
 		mFboTemporary.bindFramebuffer();
 		gl::clear(Color::black());
 		mFboBlurred.bindTexture(0); // use rendered scene as texture
 		gl::pushMatrices();
-		gl::setMatricesWindow(512, 512, false);
+		gl::setMatricesWindow(getWindowHeight(), getWindowWidth(), false);
 		gl::drawSolidRect(mFboBlurred.getBounds());
 		gl::popMatrices();
 		mFboBlurred.unbindTexture();
 		mFboTemporary.unbindFramebuffer();
 
-		mShader.uniform("sampleOffset", Vec2f(0.0f, 1.5f / 512.0f));
+		mShader.uniform("sampleOffset", Vec2f(0.0f, 1.5f / (float)getWindowHeight()));
 
 		mFboBlurred.bindFramebuffer();
 		gl::clear(Color::black());
 		mFboTemporary.bindTexture(0); // use horizontally blurred scene as texture
 		gl::pushMatrices();
-		gl::setMatricesWindow(512, 512, false);
+		gl::setMatricesWindow(getWindowHeight(), getWindowWidth(), false);
 		gl::drawSolidRect(mFboTemporary.getBounds());
 		gl::popMatrices();
 		mFboTemporary.unbindTexture();
