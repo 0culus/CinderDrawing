@@ -147,8 +147,8 @@ void CinderDrawingApp::drawLine() {
 		gl::vertex(pt);
 
 		if (shaderOn) {
-			mShader.uniform("width", pt.y);
-			mShader.uniform("height", pt.x);
+            //mShader.uniform("width", pt.y);
+			//mShader.uniform("height", pt.x);
 		}
 	}
 
